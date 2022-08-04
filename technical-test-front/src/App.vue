@@ -1,17 +1,39 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <ClientList :all-clients="allClients" />
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script lang="ts">
+import { defineComponent } from "vue";
+import Client from "./types/Client";
+import ResponseData from "./types/ResponseData";
+import ClientService from "./services/ClientService";
+import ClientList from "@/components/ClientList.vue";
 
-export default {
-  name: 'App',
+export default defineComponent({
+  name: "App",
+  data() {
+    return {
+      allClients: [] as Client[]
+    };
+  },
   components: {
-    HelloWorld
+    ClientList,
+  },
+  methods: {
+    getClients() {
+      ClientService.getClients()
+          .then((response: ResponseData) => {
+            this.allClients = response.data;
+          })
+          .catch((e: Error) => {
+            console.log(e);
+          });
+    }
+  },
+  mounted() {
+    this.getClients();
   }
-}
+});
 </script>
 
 <style>
